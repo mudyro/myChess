@@ -1,6 +1,15 @@
-build
-out
-.cache
-.idea
-.vs
-.vscode
+# CMake outputs
+/build/
+/out/
+
+# Visual Studio temporary files
+.vs/
+*.user
+*.suo
+*.db
+
+# SFML / Compiler binaries
+*.exe
+*.dll
+*.so
+*.dylib
