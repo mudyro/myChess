@@ -1,22 +1,22 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "piece.h"
+#include "Piece.h"
 
 int main()
 {
-	sf::RenderWindow window( sf::VideoMode( { 735, 735 } ), "SFML works!" );
+	sf::RenderWindow window( sf::VideoMode( { 735, 735 } ), "myChess" );
 	sf::Texture boardTexture;
 	sf::Texture chessPiecesTexture;
 
-	//Zaladuj tekstur� board z pliku
+	//load board texture from file
 	if (!boardTexture.loadFromFile("../../../../assets/chessboard.jpg"))
 	{
-		//wy�wietl informacje je�li nie uda si� zadowa�
+		//show error message if loading failed
 		std::cerr << "Could not load 'chessboard.jpg' image!" << std::endl;
 		return -1;
 	}
 
-	//Zaladuj tekstur� figur
+	//load chess pieces texture from file
 	if (!chessPiecesTexture.loadFromFile("../../../../assets/ChessPieces.png"))
 	{
 		std::cerr << "Could not load 'ChessPieces.png' image!" << std::endl;
@@ -25,8 +25,28 @@ int main()
 
 	sf::Sprite boardSprite(boardTexture);
 
-	Piece whiteKing(chessPiecesTexture);
-	whiteKing.pieceSprite.setTextureRect(sf::IntRect({ 0,0 }, { 213,213 }));
+	// Create chess pieces
+
+	std::vector<Piece> pieces;
+
+	// Create pawns
+
+	for (int i = 0; i < 8; i++)
+	{
+		pieces.push_back(Piece(chessPiecesTexture,PieceType::Pawn,PieceColor::White,i,6));
+		pieces.push_back(Piece(chessPiecesTexture,PieceType::Pawn,PieceColor::Black,i,1));
+	}
+
+	// Create remaining pieces
+
+	PieceType piecesOrder[] = {PieceType::Rook, PieceType::Bishop, PieceType::Knight,
+		PieceType::Queen, PieceType::King, PieceType::Knight, PieceType::Bishop, PieceType::Rook};
+
+	for (int i = 0; i < 8; i++)
+	{
+		pieces.push_back(Piece(chessPiecesTexture, piecesOrder[i], PieceColor::White, i, 7));
+		pieces.push_back(Piece(chessPiecesTexture, piecesOrder[i], PieceColor::Black, i, 0));
+	}
 
 	while ( window.isOpen() )
 	{
@@ -38,7 +58,12 @@ int main()
 
 		window.clear();
 		window.draw(boardSprite);
-		window.draw(whiteKing.pieceSprite);
+
+		for (const auto& piece : pieces)
+		{
+			window.draw(piece.pieceSprite);
+		}
+
 		window.display();
 	}
 }
